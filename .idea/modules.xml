@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/CRTBRA002_CSC2002S_PCP2.iml" filepath="$PROJECT_DIR$/.idea/CRTBRA002_CSC2002S_PCP2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Fixed/Fixed.iml" filepath="$PROJECT_DIR$/Fixed/Fixed.iml" />
       <module fileurl="file://$PROJECT_DIR$/Original/Original.iml" filepath="$PROJECT_DIR$/Original/Original.iml" />
     </modules>
   </component>
