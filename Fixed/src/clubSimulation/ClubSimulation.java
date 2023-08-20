@@ -1,39 +1,41 @@
 //M. M. Kuttel 2023 mkuttel@gmail.com
 
 package clubSimulation;
-// the main class, starts all threads
-import javax.swing.*;
+//Main class, starts all threads
 
-import java.awt.Color;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClubSimulation {
-	static int noClubgoers=20;
-   	static int frameX=400;
-	static int frameY=500;
-	static int yLimit=400;
-	static int gridX=10; //number of x grids in club - default value if not provided on command line
-	static int gridY=10; //number of y grids in club - default value if not provided on command line
-	static int max=5; //max number of customers - default value if not provided on command line
+	static int noClubgoers = 20;
+   	static int frameX = 400;
+	static int frameY = 500;
+	static int yLimit = 400;
+	static int gridX = 10; //no. of x grids in club - default value if not provided on command line
+	static int gridY = 10; //no. of y grids in club - default value if not provided on command line
+	static int max = 10; //max no. of customers - default value if not provided on command line
 	
-	static Clubgoer[] patrons; // array for customer threads
+	static Clubgoer[] patrons; //array for customer threads
 	static PeopleLocation [] peopleLocations;  //array to keep track of where customers are
+
+	/*Synchronisation properties*/
+	static CountDownLatch startLatch; //latch to ensure threads begin simulation on start
+	static CyclicBarrier pauseBarrier; //cyclic barrier to synchronise and block threads on pause
+	static AtomicBoolean isPaused; //is the simulation paused?
 	
 	static PeopleCounter tallys; //counters for number of people inside and outside club
 
 	static ClubView clubView; //threaded panel to display terrain
-	static ClubGrid clubGrid; // club grid
+	static ClubGrid clubGrid; //club grid
 	static CounterDisplay counterDisplay ; //threaded display of counters
-	
-	private static int maxWait=1200; //for the slowest customer
-	private static int minWait=500; //for the fastest cutomer
 
-	public static void setupGUI(int frameX,int frameY,int [] exits) {
-		// Frame initialize and dimensions
+	public static void setupGUI(int frameX, int frameY, int [] exits) {
+		//Frame initialize and dimensions
     	JFrame frame = new JFrame("club animation"); 
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	frame.setSize(frameX, frameY);
@@ -43,7 +45,7 @@ public class ClubSimulation {
       	g.setSize(frameX,frameY);
  	    
 		clubView = new ClubView(peopleLocations, clubGrid, exits);
-		clubView.setSize(frameX,frameY);
+		clubView.setSize(frameX, frameY);
 	    g.add(clubView);
 	    
 	    //add all the counters to the panel
@@ -51,38 +53,46 @@ public class ClubSimulation {
 	    txt.setLayout(new BoxLayout(txt, BoxLayout.LINE_AXIS)); 
 	    JLabel maxAllowed =new JLabel("Max: " + tallys.getMax() + "    ");
 	    JLabel caught =new JLabel("Inside: " + tallys.getInside() + "    ");
-	    JLabel missed =new JLabel("Waiting:" + tallys.getWaiting()+ "    ");
-	    JLabel scr =new JLabel("Left club:" + tallys.getLeft()+ "    ");    
+	    JLabel missed =new JLabel("Waiting: " + tallys.getWaiting()+ "    ");
+	    JLabel scr =new JLabel("Left: " + tallys.getLeft()+ "    ");
 	    txt.add(maxAllowed);
 	    txt.add(caught);
 	    txt.add(missed);
 	    txt.add(scr);
 	    g.add(txt);
-	    counterDisplay = new CounterDisplay(caught, missed,scr,tallys);      //thread to update score
+	    counterDisplay = new CounterDisplay(caught, missed, scr, tallys);      //thread to update score
        
 	    //Add start, pause and exit buttons
 	    JPanel b = new JPanel();
-        b.setLayout(new BoxLayout(b, BoxLayout.LINE_AXIS)); 
+        b.setLayout(new BoxLayout(b, BoxLayout.LINE_AXIS));
         JButton startB = new JButton("Start");
-        
-		// add the listener to the jbutton to handle the "pressed" event
+
+		//add the listener to the jbutton to handle the "pressed" event
 		startB.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e)  {
-			    	  	// THIS DOES NOTHING - MUST BE FIXED  	  
+				if (isPaused.get()) { //if paused
+					isPaused.set(false); //set pause flag to false
+					pauseBarrier.reset(); //release all club goers
+				}
+				else { //at beginning
+					startLatch.countDown(); //release threads at beginning of simulation
+				}
 		    }
 		   });
-			
+
 			final JButton pauseB = new JButton("Pause ");;
-			
-			// add the listener to the jbutton to handle the "pressed" event
+
+			//add the listener to the jbutton to handle the "pressed" event
 			pauseB.addActionListener(new ActionListener() {
 		      public void actionPerformed(ActionEvent e) {
-		    		// THIS DOES NOTHING - MUST BE FIXED  	
+				  	if (!isPaused.get()) { //if not paused
+						isPaused.set(true); //set paused flag to true
+					}
 		      }
 		    });
-			
+
 		JButton endB = new JButton("Quit");
-				// add the listener to the jbutton to handle the "pressed" event
+				//add the listener to the jbutton to handle the "pressed" event
 				endB.addActionListener(new ActionListener() {
 			      public void actionPerformed(ActionEvent e) {
 			    	  	System.exit(0);
@@ -92,56 +102,60 @@ public class ClubSimulation {
 		b.add(startB);
 		b.add(pauseB);
 		b.add(endB);
-		
+
 		g.add(b);
     	
-      	frame.setLocationRelativeTo(null);  // Center window on screen.
+      	frame.setLocationRelativeTo(null);  //Center window on screen.
       	frame.add(g); //add contents to window
         frame.setContentPane(g);     
         frame.setVisible(true);	
 	}
-	
-	
 
 	public static void main(String[] args) throws InterruptedException {
-		
-		//deal with command line arguments if provided
-		if (args.length==4) {
-			noClubgoers=Integer.parseInt(args[0]);  //total people to enter room
-			gridX=Integer.parseInt(args[1]); // No. of X grid cells  
-			gridY=Integer.parseInt(args[2]); // No. of Y grid cells  
-			max=Integer.parseInt(args[3]); // max people allowed in club
+		//Deal with command line arguments if provided
+		if (args.length == 4) {
+			noClubgoers = Integer.parseInt(args[0]); //total people to enter room
+			gridX = Integer.parseInt(args[1]); //No. of X grid cells
+			gridY = Integer.parseInt(args[2]); //No. of Y grid cells
+			max = Integer.parseInt(args[3]); //max people allowed in club
 		}
 		
-		//hardcoded exit doors
-		int [] exit = {0,(int) gridY/2-1};  //once-cell wide door on left
+		//Hardcoded exit doors
+		int [] exit = {0, (int)gridY/2-1};  //once-cell wide door on left
 				
 	    tallys = new PeopleCounter(max); //counters for people inside and outside club
-		clubGrid = new ClubGrid(gridX, gridY, exit,tallys); //setup club with size and exitsand maximum limit for people    
+		clubGrid = new ClubGrid(gridX, gridY, exit, tallys); //setup club with size and exits and maximum limit for people
 		Clubgoer.club = clubGrid; //grid shared with class
 	   
 	    peopleLocations = new PeopleLocation[noClubgoers];
 		patrons = new Clubgoer[noClubgoers];
+
+		startLatch = new CountDownLatch(1);
+		pauseBarrier = new CyclicBarrier(noClubgoers+1);
+		isPaused = new AtomicBoolean(false);
 		
 		Random rand = new Random();
 
-        for (int i=0;i<noClubgoers;i++) {
-        		peopleLocations[i]=new PeopleLocation(i);
-        		int movingSpeed=(int)(Math.random() * (maxWait-minWait)+minWait); //range of speeds for customers
-    			patrons[i] = new Clubgoer(i,peopleLocations[i],movingSpeed);
-    		}
+        for (int i = 0; i < noClubgoers; i++) {
+			peopleLocations[i] = new PeopleLocation(i);
+			//for the slowest customer
+			int maxWait = 1200;
+			//for the fastest customer
+			int minWait = 500;
+			int movingSpeed = (int)(Math.random()*(maxWait - minWait) + minWait); //range of speeds for customers
+			patrons[i] = new Clubgoer(i, peopleLocations[i], movingSpeed, startLatch, pauseBarrier, isPaused);
+		}
 		           
-		setupGUI(frameX, frameY,exit);  //Start Panel thread - for drawing animation
-        //start all the threads
+		setupGUI(frameX, frameY, exit);  //start Panel thread - for drawing animation
+        //Start all the threads
 		Thread t = new Thread(clubView); 
       	t.start();
       	//Start counter thread - for updating counters
       	Thread s = new Thread(counterDisplay);  
       	s.start();
-      	
-      	for (int i=0;i<noClubgoers;i++) {
+
+      	for (int i = 0; i < noClubgoers; i++) {
 			patrons[i].start();
 		}
  	}
-
 }
