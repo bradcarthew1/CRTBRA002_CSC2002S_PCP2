@@ -51,11 +51,11 @@ public class PeopleLocation  { // this is a separate class so don't have to acce
 	public int getID() { return ID; }
 
 	//getter
-	public synchronized boolean inRoom() {
+	public boolean inRoom() {
 		return inRoom.get();
 	}
 
 	//getter and setter
-	public synchronized Color getColor() { return myColor; }
+	public Color getColor() { return myColor; }
 	public synchronized void setColor(Color myColor) { this.myColor = myColor; }
 }

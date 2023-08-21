@@ -22,7 +22,7 @@ public class PeopleCounter {
 		return peopleInside.get();
 	}
 	
-	public int getTotal() {
+	public synchronized int getTotal() {
 		return (peopleOutSide.get() + peopleInside.get() + peopleLeft.get());
 	}
 
@@ -40,19 +40,19 @@ public class PeopleCounter {
 	}
 	
 	//someone got inside
-	public void personEntered() {
+	public synchronized void personEntered() {
 		peopleOutSide.getAndDecrement();
 		peopleInside.getAndIncrement();
 	}
 
 	//someone left
-	public void personLeft() {
+	public synchronized void personLeft() {
 		peopleInside.getAndDecrement();
 		peopleLeft.getAndIncrement();
 	}
 
 	//too many people inside
-	public boolean overCapacity() {
+	public synchronized boolean overCapacity() {
 		return peopleInside.get() >= maxPeople.get();
     }
 	

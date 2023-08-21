@@ -5,7 +5,7 @@ package clubSimulation;
 
 //This class represents the club as a grid of GridBlocks
 public class ClubGrid {
-	private GridBlock [][] Blocks; //array of shared grid block objects
+	private final GridBlock [][] Blocks; //array of shared grid block objects
 	private final int x;
 	private final int y;
 	public  final int bar_y;
@@ -30,7 +30,7 @@ public class ClubGrid {
 	}
 	
 	//initialise the grid, creating all the GridBlocks
-	private  void initGrid(int []exitBlocks) throws InterruptedException {
+	private void initGrid(int []exitBlocks) throws InterruptedException {
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < y; j++) {
 				boolean exit_block = false;
@@ -58,11 +58,11 @@ public class ClubGrid {
 		return entrance;
 	}
 
-	public  boolean inGrid(int i, int j) {
+	public boolean inGrid(int i, int j) {
         return (i < x) && (j < y) && (i >= 0) && (j >= 0);
     }
 	
-	public  boolean inPatronArea(int i, int j) {
+	public boolean inPatronArea(int i, int j) {
         return (i < x) && (j <= bar_y) && (i >= 0) && (j >= 0);
     }
 	
@@ -98,19 +98,22 @@ public class ClubGrid {
 			return currentBlock;
 		 
 		GridBlock newBlock = Blocks[new_x][new_y];
-		
+
 		if (!newBlock.get(myLocation.getID())) return currentBlock; //stay where you are
-			
-		currentBlock.release(); //must release current block
-		myLocation.setLocation(newBlock);
-		return newBlock;
+
+		//synchronize on newBlock - ensures no other thread tries to set location to new block
+		synchronized (newBlock) {
+			currentBlock.release(); //must release current block
+			myLocation.setLocation(newBlock);
+			return newBlock;
+		}
 	} 
 
-	public synchronized void leaveClub(GridBlock currentBlock, PeopleLocation myLocation)   {
+	public void leaveClub(GridBlock currentBlock, PeopleLocation myLocation)   {
+		currentBlock.release();
+		counter.personLeft(); //add to counter
+		myLocation.setInRoom(false);
 		synchronized (entrance) {
-			currentBlock.release();
-			counter.personLeft(); //add to counter
-			myLocation.setInRoom(false);
 			entrance.notifyAll();
 		}
 	}
@@ -123,7 +126,7 @@ public class ClubGrid {
 		if (inGrid(xPos,yPos)) {
 			return Blocks[xPos][yPos];
 		}
-		System.out.println("block " + xPos + " " +yPos + "  not found");
+		System.out.println("Block " + xPos + " " +yPos + "  not found.");
 		return null;
 	}
 	

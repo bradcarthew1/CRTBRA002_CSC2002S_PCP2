@@ -24,11 +24,11 @@ public class GridBlock {
 		coords = new int [] {x,y};
 	}
 	
-	public synchronized int getX() { return coords[0]; }
+	public int getX() { return coords[0]; }
 	
-	public synchronized int getY() { return coords[1]; }
+	public int getY() { return coords[1]; }
 	
-	public synchronized boolean get(int threadID) throws InterruptedException {
+	public boolean get(int threadID) throws InterruptedException {
 		synchronized (isOccupied) {
 			if (isOccupied.get() == threadID)
 				return true; //thread Already in this block
@@ -46,19 +46,19 @@ public class GridBlock {
 		notifyAll();
 	}
 	
-	public synchronized boolean occupied() {
+	public boolean occupied() {
         return isOccupied.get() != -1;
     }
 	
-	public synchronized boolean isExit() {
+	public boolean isExit() {
 		return isExit;	
 	}
 
-	public synchronized boolean isBar() {
+	public boolean isBar() {
 		return isBar;
 	}
 
-	public synchronized boolean isDanceFloor() {
+	public boolean isDanceFloor() {
 		return isDance;
 	}
 }
