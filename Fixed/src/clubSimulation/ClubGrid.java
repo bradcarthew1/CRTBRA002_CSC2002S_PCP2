@@ -101,13 +101,10 @@ public class ClubGrid {
 
 		if (!newBlock.get(myLocation.getID())) return currentBlock; //stay where you are
 
-		//synchronize on newBlock - ensures no other thread tries to set location to new block
-		synchronized (newBlock) {
-			currentBlock.release(); //must release current block
-			myLocation.setLocation(newBlock);
-			return newBlock;
-		}
-	} 
+		currentBlock.release(); //must release current block
+		myLocation.setLocation(newBlock);
+		return newBlock;
+	}
 
 	public void leaveClub(GridBlock currentBlock, PeopleLocation myLocation)   {
 		currentBlock.release();

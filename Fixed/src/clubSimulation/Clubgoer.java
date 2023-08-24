@@ -24,9 +24,9 @@ public class Clubgoer extends Thread {
 	private final int ID; //thread ID
 
 	/*Synchronisation properties*/
-	private final CountDownLatch startLatch;
-	private final CyclicBarrier pauseBarrier;
-	private final AtomicBoolean isPaused;
+	private final CountDownLatch startLatch; //start latch
+	private final CyclicBarrier pauseBarrier; //pause barrier
+	private final AtomicBoolean isPaused; //pause flag
 
 	Clubgoer( int ID,  PeopleLocation loc,  int speed, CountDownLatch startLatch,
 			  CyclicBarrier pauseBarrier, AtomicBoolean isPaused)
@@ -46,27 +46,25 @@ public class Clubgoer extends Thread {
 	}
 	
 	//getter
-	public  boolean inRoom() {
+	public boolean inRoom() {
 		return inRoom;
 	}
 	
 	//getter
-	public   int getX() { return currentBlock.getX();}	
+	public int getX() { return currentBlock.getX();}
 	
 	//getter
-	public   int getY() {	return currentBlock.getY();	}
+	public int getY() {	return currentBlock.getY();	}
 	
 	//getter
-	public   int getSpeed() { return movingSpeed; }
-
-	//setter
+	public int getSpeed() { return movingSpeed; }
 
 	//check to see if user pressed pause button
 	private void checkPause() {
 		//check if paused
 		if (isPaused.get()) {
 			try {
-				pauseBarrier.await(); //wait here for until re-start
+				pauseBarrier.await(); //wait here until simulation re-start
 			}
 			catch (BrokenBarrierException | InterruptedException ignored) {};
 		}

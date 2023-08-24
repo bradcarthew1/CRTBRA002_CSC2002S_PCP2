@@ -12,13 +12,13 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClubSimulation {
-	static int noClubgoers = 30;
+	static int noClubgoers = 50;
    	static int frameX = 400;
 	static int frameY = 500;
 	static int yLimit = 400;
 	static int gridX = 10; //no. of x grids in club - default value if not provided on command line
 	static int gridY = 10; //no. of y grids in club - default value if not provided on command line
-	static int max = 15; //max no. of customers - default value if not provided on command line
+	static int max = 30; //max no. of customers - default value if not provided on command line
 	
 	static Clubgoer[] patrons; //array for customer threads
 	static PeopleLocation [] peopleLocations;  //array to keep track of where customers are
@@ -70,9 +70,9 @@ public class ClubSimulation {
 		//add the listener to the jbutton to handle the "pressed" event
 		startB.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e)  {
-				if (isPaused.get()) { //if paused
+				if (isPaused.get()) { //if simulation is paused
+					pauseBarrier.reset(); //release all club goers waiting on cyclic barrier
 					isPaused.set(false); //set pause flag to false
-					pauseBarrier.reset(); //release all club goers
 				}
 				else { //at beginning
 					startLatch.countDown(); //release threads at beginning of simulation
@@ -85,8 +85,8 @@ public class ClubSimulation {
 			//add the listener to the jbutton to handle the "pressed" event
 			pauseB.addActionListener(new ActionListener() {
 		      public void actionPerformed(ActionEvent e) {
-				  	if (!isPaused.get()) { //if not paused
-						isPaused.set(true); //set paused flag to true
+				  	if (!isPaused.get()) { //if simulation is not paused
+						isPaused.set(true); //set paused flag to true to block threads at barrier
 					}
 		      }
 		    });
@@ -130,9 +130,9 @@ public class ClubSimulation {
 	    peopleLocations = new PeopleLocation[noClubgoers];
 		patrons = new Clubgoer[noClubgoers];
 
-		startLatch = new CountDownLatch(1);
-		pauseBarrier = new CyclicBarrier(noClubgoers+1);
-		isPaused = new AtomicBoolean(false);
+		startLatch = new CountDownLatch(1); //set latch count to 1
+		pauseBarrier = new CyclicBarrier(noClubgoers+1); //set pause barrier to number of threads +1
+		isPaused = new AtomicBoolean(false); //set pause flag to false
 		
 		Random rand = new Random();
 
