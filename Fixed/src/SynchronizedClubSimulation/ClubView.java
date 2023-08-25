@@ -1,4 +1,4 @@
-package clubSimulation;
+package SynchronizedClubSimulation;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -79,6 +79,8 @@ public class ClubView extends JPanel implements Runnable {
 			 
 		    //patrons with shared patronLocations
 			for (int i = 0; i < noPatrons; i++){
+				//synchronize on individual PeopleLocation objects - prevents interleaving
+				//accurately display graphical location of threads
 				synchronized (patronLocations[i]) {
 					if (patronLocations[i].inRoom()) {
 						g.setColor(patronLocations[i].getColor());

@@ -1,6 +1,6 @@
 //M. M. Kuttel 2023 mkuttel@gmail.com
 
-package clubSimulation;
+package SynchronizedClubSimulation;
 //Main class, starts all threads
 
 import javax.swing.*;
@@ -133,8 +133,6 @@ public class ClubSimulation {
 		startLatch = new CountDownLatch(1); //set latch count to 1
 		pauseBarrier = new CyclicBarrier(noClubgoers+1); //set pause barrier to number of threads +1
 		isPaused = new AtomicBoolean(false); //set pause flag to false
-		
-		Random rand = new Random();
 
         for (int i = 0; i < noClubgoers; i++) {
 			peopleLocations[i] = new PeopleLocation(i);

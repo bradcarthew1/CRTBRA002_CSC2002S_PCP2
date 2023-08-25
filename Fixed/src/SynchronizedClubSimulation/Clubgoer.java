@@ -1,5 +1,5 @@
 //M. M. Kuttel 2023 mkuttel@gmail.com
-package clubSimulation;
+package SynchronizedClubSimulation;
 
 import java.util.Random;
 import java.util.concurrent.*;
@@ -44,20 +44,6 @@ public class Clubgoer extends Thread {
 		this.pauseBarrier = pauseBarrier;
 		this.isPaused = isPaused;
 	}
-	
-	//getter
-	public boolean inRoom() {
-		return inRoom;
-	}
-	
-	//getter
-	public int getX() { return currentBlock.getX();}
-	
-	//getter
-	public int getY() {	return currentBlock.getY();	}
-	
-	//getter
-	public int getSpeed() { return movingSpeed; }
 
 	//check to see if user pressed pause button
 	private void checkPause() {

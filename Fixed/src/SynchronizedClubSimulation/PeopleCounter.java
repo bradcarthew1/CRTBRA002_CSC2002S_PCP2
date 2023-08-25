@@ -1,4 +1,4 @@
-package clubSimulation;
+package SynchronizedClubSimulation;
 import java.util.concurrent.atomic.*;
 
 public class PeopleCounter {
@@ -21,10 +21,6 @@ public class PeopleCounter {
 	public int getInside() {
 		return peopleInside.get();
 	}
-	
-	public synchronized int getTotal() {
-		return (peopleOutSide.get() + peopleInside.get() + peopleLeft.get());
-	}
 
 	public int getLeft() {
 		return peopleLeft.get();
@@ -41,6 +37,7 @@ public class PeopleCounter {
 	
 	//someone got inside
 	public void personEntered() {
+		//ensures people inside and outside counters are together when Clubgoer enters
 		synchronized (peopleInside) {
 			synchronized (peopleOutSide) {
 				peopleOutSide.getAndDecrement();
@@ -51,6 +48,7 @@ public class PeopleCounter {
 
 	//someone left
 	public void personLeft() {
+		//ensures people inside and left counters are together when Clubgoer leaves
 		synchronized (peopleInside) {
 			peopleInside.getAndDecrement();
 			synchronized (peopleLeft) {
@@ -63,11 +61,4 @@ public class PeopleCounter {
 	public boolean overCapacity() {
 		return peopleInside.get() >= maxPeople.get();
     }
-	
-	//not used
-	public void resetScore() {
-		peopleInside.set(0);
-		peopleOutSide.set(0);
-		peopleLeft.set(0);
-	}
 }

@@ -1,4 +1,4 @@
-package clubSimulation;
+package SynchronizedClubSimulation;
 
 import java.awt.Color;
 
@@ -21,6 +21,7 @@ public class CounterDisplay implements Runnable {
 	
 	public void run() { //this thread just updates the display of the counters
         while (true) {
+			//synchronize local PeopleCounter object to prevent interleaving - display accurate information
 			synchronized (score){
 				//test changes colour when at limit and over limit of people inside
 				if (score.getMax() < score.getInside()) {

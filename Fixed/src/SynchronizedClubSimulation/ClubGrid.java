@@ -1,7 +1,7 @@
 //M. M. Kuttel 2023 mkuttel@gmail.com
 //Grid for the club
 
-package clubSimulation;
+package SynchronizedClubSimulation;
 
 //This class represents the club as a grid of GridBlocks
 public class ClubGrid {
@@ -110,6 +110,7 @@ public class ClubGrid {
 		currentBlock.release();
 		counter.personLeft(); //add to counter
 		myLocation.setInRoom(false);
+		//notify threads waiting on entrance when leaving
 		synchronized (entrance) {
 			entrance.notifyAll();
 		}
@@ -117,18 +118,6 @@ public class ClubGrid {
 
 	public GridBlock getExit() {
 		return exit;
-	}
-
-	public GridBlock whichBlock(int xPos, int yPos) {
-		if (inGrid(xPos,yPos)) {
-			return Blocks[xPos][yPos];
-		}
-		System.out.println("Block " + xPos + " " +yPos + "  not found.");
-		return null;
-	}
-	
-	public void setExit(GridBlock exit) {
-		this.exit = exit;
 	}
 
 	public int getBar_y() {

@@ -1,4 +1,4 @@
-package clubSimulation;
+package SynchronizedClubSimulation;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,6 +29,8 @@ public class GridBlock {
 	public int getY() { return coords[1]; }
 	
 	public boolean get(int threadID) throws InterruptedException {
+		//allow only one thread to get grid block at a time
+		//prevent interleaving
 		synchronized (isOccupied) {
 			if (isOccupied.get() == threadID)
 				return true; //thread Already in this block
@@ -40,7 +42,8 @@ public class GridBlock {
 			return true;
 		}
 	}
-		
+
+	//synchronize to notify threads waiting on entrance
 	public synchronized void release() {
 		isOccupied.set(-1);
 		notifyAll();

@@ -1,4 +1,4 @@
-package clubSimulation;
+package SynchronizedClubSimulation;
 
 import java.awt.Color;
 import java.util.Random;
@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.*;
 
 public class PeopleLocation  { // this is a separate class so don't have to access thread
 	private final int ID; //each person has an ID
-	private Color myColor; //colour of the person
+	private final Color myColor; //colour of the person
 	private final AtomicBoolean inRoom; //are they in the club?
 	private final AtomicBoolean arrived; //have they arrived at the club?
 	private GridBlock location; //which GridBlock are they on?
@@ -25,26 +25,20 @@ public class PeopleLocation  { // this is a separate class so don't have to acce
 		this.inRoom.set(in);
 	}
 	
-	//getter and setter
-	public boolean getArrived() {
-		return arrived.get();
-	}
+	//getter
 	public void setArrived() {
 		this.arrived.set(true);;
 	}
 
-	//getter and setter
-	public GridBlock getLocation() {
-		return location;
-	}
+	//setter - synchronize setting of location property
 	public synchronized void setLocation(GridBlock location) {
 		this.location = location;
 	}
 
-	//getter
+	//getter - synchronize retrieval of x location
 	public synchronized int getX() { return location.getX(); }
 	
-	//getter
+	//getter - synchronize retrieval of y location
 	public synchronized int getY() { return location.getY(); }
 	
 	//getter
@@ -57,5 +51,4 @@ public class PeopleLocation  { // this is a separate class so don't have to acce
 
 	//getter and setter
 	public Color getColor() { return myColor; }
-	public synchronized void setColor(Color myColor) { this.myColor = myColor; }
 }
