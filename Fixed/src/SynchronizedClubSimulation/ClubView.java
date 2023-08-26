@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 
 public class ClubView extends JPanel implements Runnable {
 		private final PeopleLocation[] patronLocations; //array of the locations of the patrons
-		private PeopleLocation barpersonLocation; // where is the bar-person?
 		private final int noPatrons;  //total number in the simulation
 		private final int [] exits; // where is the exit?
 		private int wIncr; //width of each block
