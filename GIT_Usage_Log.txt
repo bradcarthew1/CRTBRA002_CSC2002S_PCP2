@@ -1,3 +1,15 @@
+commit 1b6fc45189ff7cb826a526bf0c8f44da37e6f98e
+Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
+Date:   Sat Aug 26 13:19:53 2023 +0200
+
+    Refactored Clubgoer constructor.
+
+commit b05c09a66e3ca1cfe91e9c3e067b4612d445cf07
+Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
+Date:   Sat Aug 26 09:39:20 2023 +0200
+
+    Added git usage log text file.
+
 commit 777cc79539ac47d8dd97d9db269a900b2b564112
 Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
 Date:   Sat Aug 26 09:37:12 2023 +0200
