@@ -130,8 +130,13 @@ public class ClubSimulation {
 		patrons = new Clubgoer[noClubgoers];
 
 		startLatch = new CountDownLatch(1); //set latch count to 1
+		Clubgoer.startLatch = startLatch;
+
 		pauseBarrier = new CyclicBarrier(noClubgoers+1); //set pause barrier to number of threads +1
+		Clubgoer.pauseBarrier = pauseBarrier;
+
 		isPaused = new AtomicBoolean(false); //set pause flag to false
+		Clubgoer.isPaused = isPaused;
 
         for (int i = 0; i < noClubgoers; i++) {
 			peopleLocations[i] = new PeopleLocation(i);
@@ -140,7 +145,7 @@ public class ClubSimulation {
 			//for the fastest customer
 			int minWait = 500;
 			int movingSpeed = (int)(Math.random()*(maxWait - minWait) + minWait); //range of speeds for customers
-			patrons[i] = new Clubgoer(i, peopleLocations[i], movingSpeed, startLatch, pauseBarrier, isPaused);
+			patrons[i] = new Clubgoer(i, peopleLocations[i], movingSpeed);
 		}
 		           
 		setupGUI(frameX, frameY, exit);  //start Panel thread - for drawing animation

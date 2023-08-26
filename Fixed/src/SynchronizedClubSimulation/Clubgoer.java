@@ -12,6 +12,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Clubgoer extends Thread {
 	public static ClubGrid club; //shared club
 
+	/*Synchronisation properties*/
+	public static CountDownLatch startLatch; //start latch
+	public static CyclicBarrier pauseBarrier; //pause barrier
+	public static AtomicBoolean isPaused; //pause flag
+
 	GridBlock currentBlock;
 	private final Random rand;
 	private final int movingSpeed;
@@ -23,13 +28,7 @@ public class Clubgoer extends Thread {
 	
 	private final int ID; //thread ID
 
-	/*Synchronisation properties*/
-	private final CountDownLatch startLatch; //start latch
-	private final CyclicBarrier pauseBarrier; //pause barrier
-	private final AtomicBoolean isPaused; //pause flag
-
-	Clubgoer( int ID,  PeopleLocation loc,  int speed, CountDownLatch startLatch,
-			  CyclicBarrier pauseBarrier, AtomicBoolean isPaused)
+	Clubgoer( int ID,  PeopleLocation loc,  int speed)
 	{
 		this.ID = ID;
 		movingSpeed = speed; //range of speeds for customers
@@ -38,11 +37,6 @@ public class Clubgoer extends Thread {
 		thirsty = true; //thirsty when arrive
 		wantToLeave = false; //want to stay when arrive
 		rand = new Random();
-
-		/*Initialize synchronisation properties*/
-		this.startLatch = startLatch;
-		this.pauseBarrier = pauseBarrier;
-		this.isPaused = isPaused;
 	}
 
 	//check to see if user pressed pause button
