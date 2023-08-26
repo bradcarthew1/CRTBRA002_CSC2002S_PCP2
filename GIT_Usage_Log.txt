@@ -1,0 +1,60 @@
+commit 777cc79539ac47d8dd97d9db269a900b2b564112
+Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
+Date:   Sat Aug 26 09:37:12 2023 +0200
+
+    Removed unnecessary pakcages and variables.
+
+commit e958b0f1385a12191093f261100fdf483afba499
+Merge: 88a24dd 8b8291e
+Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
+Date:   Fri Aug 25 20:11:58 2023 +0200
+
+    Merge branch 'main' of github.com:bradcarthew1/CRTBRA002_CSC2002S_PCP2
+
+commit 88a24dda85a66cbc465c25fe20423dc022efc1e0
+Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
+Date:   Fri Aug 25 20:11:37 2023 +0200
+
+    Removed unnecessary funtions and added comments.
+
+commit 8b8291ea5beee9069d5600d9f0db07f0a5f9f8be
+Author: bradcarthew1 <88962237+bradcarthew1@users.noreply.github.com>
+Date:   Fri Aug 25 18:13:46 2023 +0200
+
+    Update README.md
+
+commit f2fcd01fcbae8c9bd71f044dd7d470c0c9924221
+Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
+Date:   Thu Aug 24 21:40:16 2023 +0200
+
+    Add recent synchronisation additions/removals.
+
+commit 5fd7b3f66a9311bf58eabdeb652306e1f79d08e6
+Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
+Date:   Mon Aug 21 21:32:43 2023 +0200
+
+    Refactored synchronisation (next -> Clubgoer and PeopleLocation sync).
+
+commit 4557737aa11be340013967d661608b0629256756
+Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
+Date:   Sun Aug 20 16:29:56 2023 +0200
+
+    Added synchronizations for pause, start and counter display.
+
+commit ec3c5e2d34070e8a399552867948a7f2276e911f
+Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
+Date:   Wed Aug 16 19:24:44 2023 +0200
+
+    Added module for fixed club simulation.
+
+commit 832cf488b0fb84c3a9237bf6af06477118ecb35e
+Author: bradcarthew1 <CRTBRA002@myuct.ac.za>
+Date:   Tue Aug 15 20:06:34 2023 +0200
+
+    Added original club simulation package (v1).
+
+commit 4f80733fc134ee2275712d2f4fa641e1ee63e04d
+Author: bradcarthew1 <88962237+bradcarthew1@users.noreply.github.com>
+Date:   Tue Aug 15 19:45:06 2023 +0200
+
+    Initial commit
